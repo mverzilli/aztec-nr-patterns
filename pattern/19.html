@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>19. Authorization Witnesses — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="18.html" class="nav-prev">&larr; 18. Event Emission Protocol</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="26.html" class="nav-next">26. Macro-Driven Contract Definition &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">19</span>
+            Authorization Witnesses
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">authorization</span>
+            
+            <span class="tag">authentication</span>
+            
+            <span class="tag">accounts</span>
+            
+            <span class="tag">delegation</span>
+            
+        </div>
+        
+    </header>
+
+    
+
+    <div class="pattern-body">
+        <p>In a privacy-preserving system, the traditional <code>msg.sender</code> check for authorization is insufficient. A user might want to authorize a specific action without being the direct caller, or delegate authority to a contract acting on their behalf.</p>
+<h2 id="context">Context</h2>
+<p>The <strong>AuthWit</strong> (Authorization Witness) pattern enables delegated authorization. Instead of checking "is the caller the owner?", a contract can check "did the owner authorize this specific action?" by verifying a signature over the action's hash.</p>
+<p>The pattern works in two steps:</p>
+<ol>
+<li>The application contract computes an <code>inner_hash</code> representing the specific action (e.g., "transfer 100 tokens from Alice to Bob via contract X").</li>
+<li>It calls <code>check_authwit(outer_hash, inner_hash)</code> which routes to the authorizing account's <code>is_valid_impl</code> function.</li>
+</ol>
+<p>Account contracts implement <code>is_valid_impl</code> with their own signature verification logic (ECDSA, Schnorr, multisig, etc.). This makes authorization scheme-agnostic: the token contract does not need to know <em>how</em> the owner authorized the action, only <em>that</em> they did.</p>
+<p>In private, AuthWit checks happen via private function calls to the account contract. In public, they can use on-chain storage of pre-approved action hashes. Both paths converge on the same <code>check_authwit</code> interface.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Use <code>check_authwit</code> when a function operates on behalf of another user (transfers, approvals, delegated actions). The authorizing user creates a witness off-chain (signing the action hash) or on-chain (storing approval). The application contract verifies the witness without knowing the authorization mechanism. This decouples application logic from account implementation.</p>
+<h2 id="consequences">Consequences</h2>
+<p>AuthWit enables a rich ecosystem of account types (hardware wallets, multisigs, social recovery) that all work with the same application contracts. The cost is an additional verification step per delegated action, but this is inherent to any authorization system. The pattern also enables "approve and call" flows without the two-transaction pattern required by ERC-20 approve/transferFrom in Ethereum.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="18.html" class="nav-prev">&larr; 18. Event Emission Protocol</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="26.html" class="nav-next">26. Macro-Driven Contract Definition &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

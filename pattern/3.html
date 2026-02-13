@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3. Kernel Siloing — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="2.html" class="nav-prev">&larr; 2. UTXO-Based Private State</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="4.html" class="nav-next">4. Asynchronous Cross-Domain Messaging &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/system.html" class="pattern-scale-link">System Architecture</a>
+        
+        <h1>
+            <span class="pattern-number">3</span>
+            Kernel Siloing
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">security</span>
+            
+            <span class="tag">isolation</span>
+            
+            <span class="tag">hashing</span>
+            
+            <span class="tag">kernel</span>
+            
+        </div>
+        
+    </header>
+
+    
+
+    <div class="pattern-body">
+        <p>If two contracts independently create notes with the same hash, or if a malicious contract can produce nullifiers that collide with another contract's notes, the integrity of private state collapses.</p>
+<h2 id="context">Context</h2>
+<p>Aztec's kernel circuit automatically <strong>silos</strong> note hashes, nullifiers, and storage keys by mixing in the originating contract's address. Before a note hash is committed to the global tree, the kernel computes <code>hash(contract_address, note_hash)</code>. Similarly, nullifiers are siloed before entering the nullifier tree.</p>
+<p>This siloing happens outside the application circuit -- contracts themselves work with "inner" (unsiloed) hashes, while the kernel produces the "siloed" versions that appear on-chain. The <code>ConfirmedNote</code> type carries both the inner hash (for the contract's own logic) and the siloed hash (for tree membership proofs).</p>
+<h2 id="therefore">Therefore</h2>
+<p>Rely on kernel siloing as an implicit security boundary rather than implementing contract-level isolation manually. Contract code computes note hashes and nullifiers from its own data; the kernel ensures these cannot collide with or be confused for another contract's values. When verifying note existence, use the siloed hash for tree proofs and the inner hash for application logic.</p>
+<h2 id="consequences">Consequences</h2>
+<p>Developers do not need to include contract addresses in their note hash computations -- the kernel does this automatically. This simplifies note definitions and prevents a class of cross-contract attacks. However, it means that a note's on-chain hash differs from its in-contract hash, which surfaces when working with <code>ConfirmedNote</code> objects that expose both representations.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="2.html" class="nav-prev">&larr; 2. UTXO-Based Private State</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="4.html" class="nav-next">4. Asynchronous Cross-Domain Messaging &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

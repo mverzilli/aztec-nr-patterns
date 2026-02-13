@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17. Explicit Delivery — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="16.html" class="nav-prev">&larr; 16. Note Lifecycle</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="18.html" class="nav-next">18. Event Emission Protocol &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">17</span>
+            Explicit Delivery
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">notes</span>
+            
+            <span class="tag">delivery</span>
+            
+            <span class="tag">encryption</span>
+            
+            <span class="tag">privacy</span>
+            
+            <span class="tag">intentionality</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="2.html" class="cross-ref-link">2. UTXO-Based Private State</a>, 
+        
+        <a href="5.html" class="cross-ref-link">5. Privacy-Preserving State Discovery</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>A created note is useless to its owner until the owner's PXE discovers it. If the framework silently handled delivery, developers might not realize that a missing or misconfigured delivery means the recipient can never access their state.</p>
+<h2 id="context">Context</h2>
+<p>When <code>create_note</code> is called, it returns a <code>NoteMessage</code> rather than silently delivering the note. The developer must explicitly choose how to deliver:</p>
+<ul>
+<li><code>.deliver()</code> -- encrypt the note for its owner and emit it as a constrained encrypted log</li>
+<li><code>.deliver_unconstrained()</code> -- deliver via an unconstrained path (lower cost, weaker guarantees)</li>
+<li>Do nothing -- the note exists on-chain (its hash is in the tree) but no encrypted payload is broadcast</li>
+</ul>
+<p>This pattern is modeled after Rust's <code>#[must_use]</code> philosophy: the return type forces the developer to make a conscious decision about delivery. Ignoring the <code>NoteMessage</code> is possible but requires explicit acknowledgment.</p>
+<p>The same pattern appears in event emission: <code>self.emit(event)</code> returns a value that must be explicitly delivered, ensuring developers choose between private (encrypted) and public delivery.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Always handle the <code>NoteMessage</code> returned by <code>create_note</code>. For notes that must reach a specific owner, call <code>.deliver()</code> with the appropriate encryption parameters. For notes created for the caller's own use, the PXE can discover them through the oracle notification, but delivery to other parties still requires explicit action.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The explicit delivery pattern prevents a class of bugs where notes are created but never received by their intended owners. It adds one line of code per note creation but makes the delivery guarantee visible in the source code. Code reviewers can verify delivery correctness by looking for <code>.deliver()</code> calls adjacent to <code>create_note</code> calls.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="16.html" class="nav-prev">&larr; 16. Note Lifecycle</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="18.html" class="nav-next">18. Event Emission Protocol &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

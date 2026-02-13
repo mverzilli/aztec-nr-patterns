@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementation — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<div class="scale-page">
+    <header class="scale-header">
+        <h1>Implementation</h1>
+        <p class="scale-range">Patterns 26&ndash;40</p>
+        <p class="scale-description">Patterns at the code level: macros, conventions, and techniques</p>
+    </header>
+
+    <ol class="pattern-list">
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/26.html">
+                <span class="pattern-number">26</span>
+                <span class="pattern-name">Macro-Driven Contract Definition</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">A privacy-preserving smart contract requires substantial boilerplate: note hash and nullifier computation dispatch, state synchronization entry points, message decryption logic, and ABI exports. Writing this by hand for every contract would be error-prone and tedious.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/27.html">
+                <span class="pattern-number">27</span>
+                <span class="pattern-name">Generated Calling Interfaces</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">Cross-contract calls require encoding function selectors and arguments correctly. Manual encoding is fragile -- a mistyped selector or wrong argument order produces silent failures or invalid proofs.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/28.html">
+                <span class="pattern-number">28</span>
+                <span class="pattern-name">Initialization Guards</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">A contract that can be initialized multiple times is vulnerable to state reset attacks. But in a privacy-preserving system, simply checking a boolean flag in public storage would leak information about the contract&#39;s initialization status.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/29.html">
+                <span class="pattern-number">29</span>
+                <span class="pattern-name">Function Annotation Convention</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">A contract contains functions with fundamentally different execution semantics: private, public, utility, internal, initializer, view-only. Without a clear classification system, it is ambiguous which functions can be called externally and in which execution context.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/30.html">
+                <span class="pattern-number">30</span>
+                <span class="pattern-name">Packable Serialization</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">Blockchain state is ultimately stored as arrays of finite field elements, but contract developers work with structured types (structs, integers, addresses). The system needs a uniform way to convert between structured types and field arrays for storage and hashing.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-1">
+            <a href="../pattern/31.html">
+                <span class="pattern-number">31</span>
+                <span class="pattern-name">Partial Notes</span>
+                <span class="confidence-indicator" title="Progressing">★</span>
+            </a>
+            
+            <p class="pattern-problem">Some operations require a value that is only known after public execution, but the note must be created in private context. Neither domain alone has all the information needed to create the complete note.</p>
+            
+        </li>
+        
+    </ol>
+
+    <a href="../index.html" class="back-link">&larr; Back to all patterns</a>
+</div>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

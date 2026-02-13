@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>29. Function Annotation Convention — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="28.html" class="nav-prev">&larr; 28. Initialization Guards</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="30.html" class="nav-next">30. Packable Serialization &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/implementation.html" class="pattern-scale-link">Implementation</a>
+        
+        <h1>
+            <span class="pattern-number">29</span>
+            Function Annotation Convention
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">macros</span>
+            
+            <span class="tag">annotations</span>
+            
+            <span class="tag">functions</span>
+            
+            <span class="tag">convention</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="11.html" class="cross-ref-link">11. Context-Aware Type System</a>, 
+        
+        <a href="26.html" class="cross-ref-link">26. Macro-Driven Contract Definition</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>A contract contains functions with fundamentally different execution semantics: private, public, utility, internal, initializer, view-only. Without a clear classification system, it is ambiguous which functions can be called externally and in which execution context.</p>
+<h2 id="context">Context</h2>
+<p>Aztec-nr uses a layered annotation system where every function must declare its nature:</p>
+<p><strong>Domain annotations</strong> (exactly one required):
+- <code>#[external("private")]</code> -- externally callable, runs in private context
+- <code>#[external("public")]</code> -- externally callable, runs in public context
+- <code>#[external("utility")]</code> -- externally callable, runs unconstrained
+- <code>#[internal]</code> -- callable only from within the contract
+- <code>#[test]</code> -- test function, not part of the contract</p>
+<p><strong>Modifier annotations</strong> (optional, combinable):
+- <code>#[initializer]</code> -- marks a constructor function
+- <code>#[view]</code> -- marks a read-only function
+- <code>#[only_self]</code> -- restricts to calls from the contract itself
+- <code>#[noinitcheck]</code> -- skips initialization verification
+- <code>#[allow_phase_change]</code> -- permits non-revertible to revertible transition (account contracts only)</p>
+<p>The <code>#[aztec]</code> macro validates that every non-test function has exactly one domain annotation. Functions without annotations produce a compile error, preventing accidentally unclassified functions from appearing in the contract.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Annotate every function with its domain and any applicable modifiers. Read the annotations as a declaration of intent: <code>#[external("private"), initializer]</code> means "this is a private function that serves as a constructor." The annotations drive code generation, ABI export, and context injection, so they are not merely documentation -- they are load-bearing.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The annotation system makes function classification explicit and machine-readable. New developers can understand a contract's interface by scanning annotations alone. The compile-time validation ensures no function escapes classification, preventing a category of "accidentally exposed" bugs.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="28.html" class="nav-prev">&larr; 28. Initialization Guards</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="30.html" class="nav-next">30. Packable Serialization &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

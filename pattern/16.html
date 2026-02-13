@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16. Note Lifecycle — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="15.html" class="nav-prev">&larr; 15. Storage Slot Derivation</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="17.html" class="nav-next">17. Explicit Delivery &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">16</span>
+            Note Lifecycle
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">notes</span>
+            
+            <span class="tag">lifecycle</span>
+            
+            <span class="tag">create</span>
+            
+            <span class="tag">destroy</span>
+            
+            <span class="tag">nullify</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="2.html" class="cross-ref-link">2. UTXO-Based Private State</a>, 
+        
+        <a href="5.html" class="cross-ref-link">5. Privacy-Preserving State Discovery</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>Notes are the atoms of private state, but they have a non-trivial lifecycle: creation, retrieval, and destruction each involve different cryptographic operations and different interactions with the kernel and PXE.</p>
+<h2 id="context">Context</h2>
+<p>The note lifecycle has three phases:</p>
+<p><strong>Creation</strong> (<code>create_note</code>):
+1. Generate random <code>randomness</code> value for the note
+2. Compute the note hash from packed fields, owner, slot, and randomness
+3. Notify the PXE via oracle so it can track the note locally
+4. Push the note hash to the kernel (which will silo it and commit to the note hash tree)
+5. Return a <code>NoteMessage</code> for delivery (see <strong>Explicit Delivery</strong>)</p>
+<p><strong>Retrieval</strong> (<code>get_note</code> / <code>get_notes</code>):
+1. Query the PXE oracle for notes matching the storage slot and owner
+2. Oracle returns note data from its local database
+3. Verify each note's existence via tree membership proof (the kernel checks this)
+4. Return <code>ConfirmedNote</code> objects containing both the note and its hash</p>
+<p><strong>Destruction</strong> (<code>destroy_note</code>):
+1. Retrieve the <code>ConfirmedNote</code> to be destroyed
+2. Compute the nullifier from the note hash and the owner's nullifier secret key
+3. Push the nullifier to the kernel (which will silo it and commit to the nullifier tree)
+4. The note is now spent -- future retrieval attempts will exclude it</p>
+<p>The <code>#[note]</code> macro generates the <code>NoteHash</code> implementation that computes hashes and nullifiers, and the <code>NoteProperties</code> implementation that enables filtering during retrieval.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Use <code>create_note</code>, <code>get_note</code>/<code>get_notes</code>, and <code>destroy_note</code> (or the state variable methods that wrap them) for all private state operations. Do not attempt to manually insert note hashes or nullifiers. The framework ensures that the cryptographic operations are performed correctly and that the kernel receives properly formatted data.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The lifecycle abstraction hides significant cryptographic complexity. Developers work with note structs rather than hashes and proofs. The cost is that "updating" private state always means destroying old notes and creating new ones -- there is no in-place mutation. This is inherent to the UTXO model and shapes how developers think about state transitions.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="15.html" class="nav-prev">&larr; 15. Storage Slot Derivation</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="17.html" class="nav-next">17. Explicit Delivery &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

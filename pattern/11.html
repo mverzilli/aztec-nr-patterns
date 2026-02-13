@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11. Context-Aware Type System — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="5.html" class="nav-prev">&larr; 5. Privacy-Preserving State Discovery</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="12.html" class="nav-next">12. The Self Object &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">11</span>
+            Context-Aware Type System
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">types</span>
+            
+            <span class="tag">generics</span>
+            
+            <span class="tag">safety</span>
+            
+            <span class="tag">compile-time</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="1.html" class="cross-ref-link">1. Dual Execution Model</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>A developer might accidentally read public mutable state from a private function, or attempt to create notes in a public context. These errors are subtle and would produce cryptographically invalid proofs at runtime -- far too late to catch.</p>
+<h2 id="context">Context</h2>
+<p>Nearly every abstraction in aztec-nr is parameterized by a <code>Context</code> generic type. State variables like <code>PublicMutable&lt;T, Context&gt;</code> and <code>PrivateSet&lt;Note, Context&gt;</code> implement different methods depending on whether <code>Context</code> is <code>PrivateContext</code>, <code>PublicContext</code>, or <code>UtilityContext</code>. A <code>PublicMutable</code> provides a <code>read()</code> method when the context is <code>PublicContext</code> but a <code>read_public()</code> (historical read) method when the context is <code>PrivateContext</code>.</p>
+<p>This means the compiler itself enforces the dual-execution boundary. If you write code that tries to call <code>.read()</code> on a <code>PublicMutable</code> inside a private function, the code will not compile. The error message points directly at the invalid operation rather than failing at proof generation time.</p>
+<p>The pattern extends beyond state variables. The <code>ContractSelf&lt;Context, Storage&gt;</code> type provides different methods (<code>.enqueue_self</code>, <code>.call_self</code>, <code>.internal</code>) depending on the context, ensuring that only valid cross-domain operations are expressible.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Rely on the <code>Context</code> generic parameter as the primary enforcement mechanism for execution-domain safety. When designing new abstractions, parameterize them with <code>Context</code> and implement domain-specific behavior as trait impls constrained to specific context types. This shifts domain-rule violations from runtime failures to compile errors.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The codebase carries <code>Context</code> as a generic parameter through most types, adding syntactic weight. This is a deliberate trade-off: the verbosity is the price for compile-time domain safety. Developers quickly internalize which operations are available in which context, guided by the compiler rather than documentation.</p>
+    </div>
+
+    
+    <div class="cross-ref cross-ref-down">
+        <span class="cross-ref-label">Contains:</span>
+        
+        <a href="13.html" class="cross-ref-link">13. State Variable Hierarchy</a>, 
+        
+        <a href="30.html" class="cross-ref-link">30. Packable Serialization</a>
+        
+    </div>
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="5.html" class="nav-prev">&larr; 5. Privacy-Preserving State Discovery</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="12.html" class="nav-next">12. The Self Object &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

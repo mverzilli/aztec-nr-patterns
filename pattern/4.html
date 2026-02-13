@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4. Asynchronous Cross-Domain Messaging — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="3.html" class="nav-prev">&larr; 3. Kernel Siloing</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="5.html" class="nav-next">5. Privacy-Preserving State Discovery &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/system.html" class="pattern-scale-link">System Architecture</a>
+        
+        <h1>
+            <span class="pattern-number">4</span>
+            Asynchronous Cross-Domain Messaging
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">execution</span>
+            
+            <span class="tag">async</span>
+            
+            <span class="tag">enqueue</span>
+            
+            <span class="tag">cross-domain</span>
+            
+        </div>
+        
+    </header>
+
+    
+
+    <div class="pattern-body">
+        <p>Private functions execute on the user's device against historical state, while public functions execute on the block proposer against current state. A private function cannot synchronously call a public function because it would need access to state that does not yet exist from its perspective.</p>
+<h2 id="context">Context</h2>
+<p>The <strong>enqueue pattern</strong> bridges the private-to-public gap. When a private function needs to trigger public execution, it does not call the public function directly. Instead, it enqueues a request that the block proposer will execute later in the same block, after all private execution has completed.</p>
+<p>This is a one-way, fire-and-forget operation from the private side. The private function cannot read the return value of the enqueued public call. It can, however, pass arguments that were computed privately, enabling patterns where private logic determines <em>what</em> public action to take without revealing <em>why</em>.</p>
+<p>The reverse direction (public-to-private) is not possible within a single transaction. Public functions can only call other public functions synchronously.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Use <code>self.enqueue_self.function_name(args)</code> to schedule public execution from private context. Design protocols so that private functions compute and validate data, then hand off to public functions for state changes that require current-state access. Accept that the private caller cannot observe the result of the enqueued call within the same transaction.</p>
+<h2 id="consequences">Consequences</h2>
+<p>Protocols must be designed to tolerate the asynchronous boundary. A private function cannot assert that a subsequent public call succeeded. This shapes contract design: private logic should be self-contained where possible, delegating to public functions only for operations that genuinely need current state. The <strong>Partial Notes</strong> pattern addresses cases where the final value depends on public state.</p>
+    </div>
+
+    
+    <div class="cross-ref cross-ref-down">
+        <span class="cross-ref-label">Contains:</span>
+        
+        <a href="27.html" class="cross-ref-link">27. Generated Calling Interfaces</a>, 
+        
+        <a href="31.html" class="cross-ref-link">31. Partial Notes</a>
+        
+    </div>
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="3.html" class="nav-prev">&larr; 3. Kernel Siloing</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="5.html" class="nav-next">5. Privacy-Preserving State Discovery &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

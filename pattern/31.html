@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>31. Partial Notes — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="30.html" class="nav-prev">&larr; 30. Packable Serialization</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <span class="nav-next"></span>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/implementation.html" class="pattern-scale-link">Implementation</a>
+        
+        <h1>
+            <span class="pattern-number">31</span>
+            Partial Notes
+            <span class="confidence-indicator" title="Progressing">★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">notes</span>
+            
+            <span class="tag">cross-domain</span>
+            
+            <span class="tag">partial</span>
+            
+            <span class="tag">advanced</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="4.html" class="cross-ref-link">4. Asynchronous Cross-Domain Messaging</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>Some operations require a value that is only known after public execution, but the note must be created in private context. Neither domain alone has all the information needed to create the complete note.</p>
+<h2 id="context">Context</h2>
+<p>The <strong>partial note</strong> pattern bridges the private-public gap for note creation. The flow is:</p>
+<ol>
+<li>A private function creates an incomplete note -- a "partial note" -- containing all privately-known fields (e.g., the owner, the storage slot) but leaving publicly-determined fields unset.</li>
+<li>The private function enqueues a public function call, passing the partial note's commitment.</li>
+<li>The public function computes the missing values (e.g., an exchange rate, a fee amount) and "completes" the note by combining the partial commitment with the public values.</li>
+<li>The completed note hash is committed to the note hash tree.</li>
+</ol>
+<p>This allows protocols where the final state depends on both private inputs and current public state. For example, a token swap where the user privately specifies a maximum amount but the actual amount is determined by the current on-chain price.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Use partial notes when a note's contents depend on values that are only available in public execution. Structure the protocol so that private execution creates the partial commitment and enqueues the public completion. The public function must validate that the completion is consistent with the original partial note's constraints.</p>
+<h2 id="consequences">Consequences</h2>
+<p>Partial notes are the most complex pattern in aztec-nr, combining asynchronous execution, cross-domain messaging, and note creation into a single flow. They are necessary for many DeFi primitives but should be used sparingly. The pattern requires careful security analysis to ensure that the public completion step cannot be exploited to create notes with unexpected values.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="30.html" class="nav-prev">&larr; 30. Packable Serialization</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <span class="nav-next"></span>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

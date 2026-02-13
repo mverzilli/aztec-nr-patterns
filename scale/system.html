@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Architecture — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<div class="scale-page">
+    <header class="scale-header">
+        <h1>System Architecture</h1>
+        <p class="scale-range">Patterns 1&ndash;10</p>
+        <p class="scale-description">Patterns shaping the dual-execution, privacy-preserving blockchain model</p>
+    </header>
+
+    <ol class="pattern-list">
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/1.html">
+                <span class="pattern-number">1</span>
+                <span class="pattern-name">Dual Execution Model</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">A blockchain that executes everything publicly leaks all user data, but a blockchain that executes everything privately cannot support shared mutable state. The system needs both modes, but combining them introduces fundamental asymmetries in timing, visibility, and guarantees.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/2.html">
+                <span class="pattern-number">2</span>
+                <span class="pattern-name">UTXO-Based Private State</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">An account model for private state (like Solidity&#39;s storage slots) would require a global view of all state to verify transitions, destroying privacy. The system needs a way to represent private state that can be created, read, and destroyed without revealing its contents or existence to other users.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/3.html">
+                <span class="pattern-number">3</span>
+                <span class="pattern-name">Kernel Siloing</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">If two contracts independently create notes with the same hash, or if a malicious contract can produce nullifiers that collide with another contract&#39;s notes, the integrity of private state collapses.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/4.html">
+                <span class="pattern-number">4</span>
+                <span class="pattern-name">Asynchronous Cross-Domain Messaging</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">Private functions execute on the user&#39;s device against historical state, while public functions execute on the block proposer against current state. A private function cannot synchronously call a public function because it would need access to state that does not yet exist from its perspective.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/5.html">
+                <span class="pattern-number">5</span>
+                <span class="pattern-name">Privacy-Preserving State Discovery</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">In a privacy-preserving system, the blockchain stores only hashes of private state. But the user&#39;s client must somehow learn which notes it owns without asking the network to reveal them.</p>
+            
+        </li>
+        
+    </ol>
+
+    <a href="../index.html" class="back-link">&larr; Back to all patterns</a>
+</div>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

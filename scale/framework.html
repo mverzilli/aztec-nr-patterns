@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Framework Abstractions — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<div class="scale-page">
+    <header class="scale-header">
+        <h1>Framework Abstractions</h1>
+        <p class="scale-range">Patterns 11&ndash;25</p>
+        <p class="scale-description">Patterns for the core abstractions that contract developers use daily</p>
+    </header>
+
+    <ol class="pattern-list">
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/11.html">
+                <span class="pattern-number">11</span>
+                <span class="pattern-name">Context-Aware Type System</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">A developer might accidentally read public mutable state from a private function, or attempt to create notes in a public context. These errors are subtle and would produce cryptographically invalid proofs at runtime -- far too late to catch.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/12.html">
+                <span class="pattern-number">12</span>
+                <span class="pattern-name">The Self Object</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">Contract functions need access to storage, the execution context, the contract&#39;s own address, and the ability to call other contracts or emit events. Passing all of these as separate parameters would be verbose and error-prone.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/13.html">
+                <span class="pattern-number">13</span>
+                <span class="pattern-name">State Variable Hierarchy</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">The dual-execution model demands different storage semantics for public and private state, yet contracts need a uniform way to declare and organize their storage. Without a shared abstraction, each state variable type would require its own initialization and slot-assignment logic.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/14.html">
+                <span class="pattern-number">14</span>
+                <span class="pattern-name">Owned State Containers</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">Private state variables hold notes that belong to specific owners, but the storage system assigns a single base slot per field. Without a way to scope private state by owner, every user&#39;s notes would share the same storage slot, making retrieval inefficient and semantics unclear.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/15.html">
+                <span class="pattern-number">15</span>
+                <span class="pattern-name">Storage Slot Derivation</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">A mapping from keys to values needs a way to assign unique storage slots to each key-value pair. Using sequential numbering would require knowing all keys in advance, which is impossible for open-ended mappings like user balances.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/16.html">
+                <span class="pattern-number">16</span>
+                <span class="pattern-name">Note Lifecycle</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">Notes are the atoms of private state, but they have a non-trivial lifecycle: creation, retrieval, and destruction each involve different cryptographic operations and different interactions with the kernel and PXE.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/17.html">
+                <span class="pattern-number">17</span>
+                <span class="pattern-name">Explicit Delivery</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">A created note is useless to its owner until the owner&#39;s PXE discovers it. If the framework silently handled delivery, developers might not realize that a missing or misconfigured delivery means the recipient can never access their state.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/18.html">
+                <span class="pattern-number">18</span>
+                <span class="pattern-name">Event Emission Protocol</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">Contracts need to emit observable side-effects for off-chain indexing, but in a privacy-preserving system, events must support both encrypted (private) and transparent (public) emission modes.</p>
+            
+        </li>
+        
+        <li class="pattern-entry confidence-2">
+            <a href="../pattern/19.html">
+                <span class="pattern-number">19</span>
+                <span class="pattern-name">Authorization Witnesses</span>
+                <span class="confidence-indicator" title="Invariant">★★</span>
+            </a>
+            
+            <p class="pattern-problem">In a privacy-preserving system, the traditional `msg.sender` check for authorization is insufficient. A user might want to authorize a specific action without being the direct caller, or delegate authority to a contract acting on their behalf.</p>
+            
+        </li>
+        
+    </ol>
+
+    <a href="../index.html" class="back-link">&larr; Back to all patterns</a>
+</div>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

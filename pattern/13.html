@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13. State Variable Hierarchy — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="12.html" class="nav-prev">&larr; 12. The Self Object</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="14.html" class="nav-next">14. Owned State Containers &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">13</span>
+            State Variable Hierarchy
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">storage</span>
+            
+            <span class="tag">state</span>
+            
+            <span class="tag">traits</span>
+            
+            <span class="tag">hierarchy</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="11.html" class="cross-ref-link">11. Context-Aware Type System</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>The dual-execution model demands different storage semantics for public and private state, yet contracts need a uniform way to declare and organize their storage. Without a shared abstraction, each state variable type would require its own initialization and slot-assignment logic.</p>
+<h2 id="context">Context</h2>
+<p>All state variables implement the <code>StateVariable&lt;N, Context&gt;</code> trait, where <code>N</code> is the number of storage slots consumed. This trait provides a <code>storage</code> method that accepts a context and a base slot, returning an initialized instance. The <code>#[storage]</code> macro walks the storage struct's fields, assigns sequential slot numbers starting from 1, and calls <code>storage()</code> on each.</p>
+<p>The hierarchy splits into two families:</p>
+<p><strong>Public state variables</strong> store data directly in the public state tree:
+- <code>PublicMutable&lt;T&gt;</code> -- read/write current state
+- <code>PublicImmutable&lt;T&gt;</code> -- write-once, readable from private (historical)
+- <code>DelayedPublicMutable&lt;T&gt;</code> -- scheduled updates, readable from private</p>
+<p><strong>Private state variables</strong> manage collections of notes in the note hash tree:
+- <code>PrivateMutable&lt;Note&gt;</code> -- single note, replace-to-update
+- <code>PrivateSet&lt;Note&gt;</code> -- multiple notes, insert/remove
+- <code>PrivateImmutable&lt;Note&gt;</code> -- single note, write-once</p>
+<p><strong>Composite types</strong> add structure on top:
+- <code>Map&lt;K, V&gt;</code> -- key-value mappings with derived slots (see <strong>Storage Slot Derivation</strong>)
+- <code>Owned&lt;V&gt;</code> -- per-owner instances of private state (see <strong>Owned State Containers</strong>)</p>
+<h2 id="therefore">Therefore</h2>
+<p>Declare all contract state in a <code>#[storage]</code> struct using the provided state variable types. Choose the variable type based on two axes: public vs. private, and mutability semantics. The framework handles slot assignment, initialization, and context-appropriate method availability automatically.</p>
+<h2 id="consequences">Consequences</h2>
+<p>Developers do not manually manage storage slots or initialization. The trait hierarchy ensures that new state variable types can be added to the framework without changing the storage macro. The cost is that developers must learn the type menu, but the names are descriptive and the compiler prevents misuse.</p>
+    </div>
+
+    
+    <div class="cross-ref cross-ref-down">
+        <span class="cross-ref-label">Contains:</span>
+        
+        <a href="14.html" class="cross-ref-link">14. Owned State Containers</a>, 
+        
+        <a href="15.html" class="cross-ref-link">15. Storage Slot Derivation</a>
+        
+    </div>
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="12.html" class="nav-prev">&larr; 12. The Self Object</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="14.html" class="nav-next">14. Owned State Containers &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

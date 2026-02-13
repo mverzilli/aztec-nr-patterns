@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18. Event Emission Protocol — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="17.html" class="nav-prev">&larr; 17. Explicit Delivery</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="19.html" class="nav-next">19. Authorization Witnesses &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">18</span>
+            Event Emission Protocol
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">events</span>
+            
+            <span class="tag">logging</span>
+            
+            <span class="tag">privacy</span>
+            
+            <span class="tag">encryption</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="1.html" class="cross-ref-link">1. Dual Execution Model</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>Contracts need to emit observable side-effects for off-chain indexing, but in a privacy-preserving system, events must support both encrypted (private) and transparent (public) emission modes.</p>
+<h2 id="context">Context</h2>
+<p>Events in aztec-nr are defined with the <code>#[event]</code> macro, which generates an <code>EventInterface</code> implementation including a unique selector (computed from the event name and parameter types). The macro also derives <code>Serialize</code> if not already present.</p>
+<p>Event emission follows a dual-mode pattern matching the execution model:</p>
+<p><strong>In private functions:</strong> <code>self.emit(event)</code> returns an event message that must be explicitly delivered -- mirroring the <strong>Explicit Delivery</strong> pattern for notes. The developer chooses between encrypted delivery (only specific parties can read it) and offchain logs.</p>
+<p><strong>In public functions:</strong> <code>self.emit(event)</code> emits the event as a public, unencrypted log visible to everyone. No delivery decision is needed because public logs are inherently transparent.</p>
+<p>The <code>#[event]</code> macro detects selector collisions at compile time, ensuring that each event type within a contract has a unique identifier for off-chain decoding.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Define events with <code>#[event]</code> and emit them through <code>self.emit()</code>. In private functions, explicitly deliver the event message to its intended recipients. In public functions, emission is immediate and transparent. Use events for data that off-chain systems need to observe -- note delivery handles private state synchronization separately.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The dual-mode emission model ensures that event privacy matches function privacy. Developers do not accidentally emit private data publicly or vice versa, because the context type determines which emission mode is available. The trade-off is that private events require recipients to actively listen and decrypt, making them less universally observable than public events.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="17.html" class="nav-prev">&larr; 17. Explicit Delivery</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="19.html" class="nav-next">19. Authorization Witnesses &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15. Storage Slot Derivation — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="14.html" class="nav-prev">&larr; 14. Owned State Containers</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="16.html" class="nav-next">16. Note Lifecycle &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">15</span>
+            Storage Slot Derivation
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">storage</span>
+            
+            <span class="tag">hashing</span>
+            
+            <span class="tag">slots</span>
+            
+            <span class="tag">map</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="13.html" class="cross-ref-link">13. State Variable Hierarchy</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>A mapping from keys to values needs a way to assign unique storage slots to each key-value pair. Using sequential numbering would require knowing all keys in advance, which is impossible for open-ended mappings like user balances.</p>
+<h2 id="context">Context</h2>
+<p>The <code>Map&lt;K, V&gt;</code> state variable uses hash-based slot derivation: for a map with base slot <code>s</code> and key <code>k</code>, the derived slot is <code>poseidon2_hash([s, k])</code>. This produces collision-free slot assignments without coordination, because Poseidon2 is a cryptographic hash function.</p>
+<p>Maps can nest: <code>Map&lt;A, Map&lt;B, PublicMutable&lt;T&gt;&gt;&gt;</code> derives slots as <code>poseidon2_hash([poseidon2_hash([base, a]), b])</code>. This enables multi-dimensional lookups (e.g., allowances keyed by <code>(owner, spender)</code>) with the same collision-resistance guarantees.</p>
+<p>The <code>Owned&lt;V&gt;</code> wrapper uses the same derivation internally when computing per-owner slots. The key type must implement <code>ToField</code> (convertible to a single field element), which is satisfied by <code>AztecAddress</code>, <code>Field</code>, and integer types.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Use <code>Map&lt;K, V&gt;</code> for any key-indexed public or private state. Nest maps for multi-key lookups. Trust the hash-based derivation to produce unique slots without manual coordination. The base slot is auto-assigned by the <code>#[storage]</code> macro; all per-key slots are deterministically derived from it.</p>
+<h2 id="consequences">Consequences</h2>
+<p>Slot derivation is invisible to the developer in normal usage. The main design consequence is that map entries cannot be enumerated -- there is no way to iterate over all keys, because the slots are hash-derived and sparse. This matches Solidity's mapping semantics and is a fundamental trade-off of hash-based slot allocation.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="14.html" class="nav-prev">&larr; 14. Owned State Containers</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="16.html" class="nav-next">16. Note Lifecycle &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

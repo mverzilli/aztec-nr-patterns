@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12. The Self Object — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="11.html" class="nav-prev">&larr; 11. Context-Aware Type System</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="13.html" class="nav-next">13. State Variable Hierarchy &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">12</span>
+            The Self Object
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">interface</span>
+            
+            <span class="tag">abstraction</span>
+            
+            <span class="tag">contract</span>
+            
+            <span class="tag">ergonomics</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="1.html" class="cross-ref-link">1. Dual Execution Model</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>Contract functions need access to storage, the execution context, the contract's own address, and the ability to call other contracts or emit events. Passing all of these as separate parameters would be verbose and error-prone.</p>
+<h2 id="context">Context</h2>
+<p>Every contract function in aztec-nr receives a <code>self</code> parameter of type <code>ContractSelf&lt;Context, Storage, ...&gt;</code>. This object is the developer's primary interface to the framework, bundling together:</p>
+<ul>
+<li><code>self.storage</code> -- the contract's state variables, initialized from the <code>#[storage]</code> struct</li>
+<li><code>self.context</code> -- the execution context (<code>PrivateContext</code>, <code>PublicContext</code>, or <code>UtilityContext</code>)</li>
+<li><code>self.address</code> -- the contract's own address</li>
+<li><code>self.msg_sender()</code> -- the caller's address</li>
+<li><code>self.call(...)</code> / <code>self.view(...)</code> -- cross-contract calls</li>
+<li><code>self.enqueue_self.*</code> -- enqueue public calls from private context</li>
+<li><code>self.call_self.*</code> / <code>self.internal.*</code> -- self-calls and internal function calls</li>
+<li><code>self.emit(event)</code> -- event emission</li>
+</ul>
+<p>The <code>#[aztec]</code> macro generates the <code>ContractSelf</code> type and injects it into every function's signature. Developers never construct it manually.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Use <code>self</code> as the single entry point for all framework interactions. Access storage through <code>self.storage</code>, make cross-contract calls through <code>self.call()</code>, and emit events through <code>self.emit()</code>. The object's available methods change based on the context type, naturally guiding developers toward valid operations.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The <code>self</code> object provides a discoverable API surface -- developers can explore available operations through IDE auto-completion. It also serves as the attachment point for <strong>Generated Calling Interfaces</strong>, where the macro synthesizes type-safe methods for calling the contract's own functions and other contracts' functions.</p>
+    </div>
+
+    
+    <div class="cross-ref cross-ref-down">
+        <span class="cross-ref-label">Contains:</span>
+        
+        <a href="27.html" class="cross-ref-link">27. Generated Calling Interfaces</a>
+        
+    </div>
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="11.html" class="nav-prev">&larr; 11. Context-Aware Type System</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="13.html" class="nav-next">13. State Variable Hierarchy &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

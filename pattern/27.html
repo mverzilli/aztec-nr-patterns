@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>27. Generated Calling Interfaces — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="26.html" class="nav-prev">&larr; 26. Macro-Driven Contract Definition</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="28.html" class="nav-next">28. Initialization Guards &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/implementation.html" class="pattern-scale-link">Implementation</a>
+        
+        <h1>
+            <span class="pattern-number">27</span>
+            Generated Calling Interfaces
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">codegen</span>
+            
+            <span class="tag">cross-contract</span>
+            
+            <span class="tag">type-safety</span>
+            
+            <span class="tag">calls</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="4.html" class="cross-ref-link">4. Asynchronous Cross-Domain Messaging</a>, 
+        
+        <a href="12.html" class="cross-ref-link">12. The Self Object</a>, 
+        
+        <a href="26.html" class="cross-ref-link">26. Macro-Driven Contract Definition</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>Cross-contract calls require encoding function selectors and arguments correctly. Manual encoding is fragile -- a mistyped selector or wrong argument order produces silent failures or invalid proofs.</p>
+<h2 id="context">Context</h2>
+<p>The <code>#[aztec]</code> macro generates a type-safe calling interface for every contract. For a contract named <code>Token</code> with an external function <code>transfer(to: AztecAddress, amount: u128)</code>, the macro produces:</p>
+<pre class="codehilite"><code class="language-noir">impl Token {
+    pub fn at(address: AztecAddress) -&gt; Self { ... }
+    pub fn transfer(self, to: AztecAddress, amount: u128) -&gt; PrivateCallInterface { ... }
+}
+</code></pre>
+
+<p>Callers invoke this as <code>self.call(Token::at(address).transfer(recipient, amount))</code>, which constructs a type-checked call request. The compiler verifies argument types, and the framework handles selector computation, argument serialization, and return value deserialization.</p>
+<p>Three kinds of interfaces are generated:
+- <strong>External call stubs</strong> -- for calling other contracts' functions
+- <strong>Self-call stubs</strong> (<code>self.enqueue_self.*</code>, <code>self.call_self.*</code>) -- for a contract calling its own functions
+- <strong>Static call stubs</strong> -- for read-only view calls</p>
+<p>The distinction between <code>.call()</code> and <code>.view()</code> on the <code>self</code> object determines whether the call is state-modifying or read-only, adding another layer of compile-time safety.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Always use the generated interface to make cross-contract calls. Import the target contract's module and use <code>ContractName::at(address).function(args)</code> to construct calls. Never manually compute function selectors or serialize arguments.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The generated interfaces make cross-contract calls as type-safe as local function calls. Refactoring a function signature in the target contract will produce compile errors in all callers, preventing silent breakage. The cost is that contracts must be compiled together (or their interfaces made available) for the type checking to work, creating a compile-time dependency graph.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="26.html" class="nav-prev">&larr; 26. Macro-Driven Contract Definition</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="28.html" class="nav-next">28. Initialization Guards &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

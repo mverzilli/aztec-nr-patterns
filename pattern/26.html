@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>26. Macro-Driven Contract Definition — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="19.html" class="nav-prev">&larr; 19. Authorization Witnesses</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="27.html" class="nav-next">27. Generated Calling Interfaces &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/implementation.html" class="pattern-scale-link">Implementation</a>
+        
+        <h1>
+            <span class="pattern-number">26</span>
+            Macro-Driven Contract Definition
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">macros</span>
+            
+            <span class="tag">codegen</span>
+            
+            <span class="tag">boilerplate</span>
+            
+            <span class="tag">aztec-macro</span>
+            
+        </div>
+        
+    </header>
+
+    
+
+    <div class="pattern-body">
+        <p>A privacy-preserving smart contract requires substantial boilerplate: note hash and nullifier computation dispatch, state synchronization entry points, message decryption logic, and ABI exports. Writing this by hand for every contract would be error-prone and tedious.</p>
+<h2 id="context">Context</h2>
+<p>The <code>#[aztec]</code> macro, applied to a contract module, is the central code generation engine. It transforms a developer-authored module into a fully functional contract by:</p>
+<ol>
+<li><strong>Validating</strong> that all functions carry appropriate annotations (<code>#[external]</code>, <code>#[internal]</code>, <code>#[test]</code>)</li>
+<li><strong>Generating calling interfaces</strong> -- a <code>ContractName</code> struct with <code>.at(address)</code> factory and type-safe calling methods for every external function (see <strong>Generated Calling Interfaces</strong>)</li>
+<li><strong>Synthesizing utility functions</strong>:</li>
+<li><code>_compute_note_hash_and_nullifier()</code> -- dispatches to the correct note type's hash/nullifier computation</li>
+<li><code>sync_state()</code> -- discovers notes from encrypted logs and verifies against the note hash tree</li>
+<li><code>process_message()</code> -- decrypts encrypted note messages and stores them in the PXE</li>
+<li><strong>Injecting context</strong> -- wrapping each function body with the appropriate context initialization and validation checks</li>
+<li><strong>Exporting ABI</strong> -- generating the metadata that external tools need to interact with the contract</li>
+</ol>
+<p>The macro operates at compile time using Noir's <code>comptime</code> system, producing code that is indistinguishable from hand-written implementations.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Apply <code>#[aztec]</code> to every contract module. Write functions with their semantic annotations (<code>#[external("private")]</code>, <code>#[initializer]</code>, etc.) and let the macro handle the mechanical parts. Do not manually implement the generated utility functions -- the macro produces them from the contract's note type declarations and function signatures.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The macro approach trades transparency for productivity. Developers cannot see the generated code directly (though they can inspect it via compiler tooling). This can make debugging harder when the generated code misbehaves. However, the macro eliminates entire categories of bugs (mismatched note type IDs, missing ABI exports, incorrect dispatch tables) by generating these mechanically.</p>
+    </div>
+
+    
+    <div class="cross-ref cross-ref-down">
+        <span class="cross-ref-label">Contains:</span>
+        
+        <a href="27.html" class="cross-ref-link">27. Generated Calling Interfaces</a>, 
+        
+        <a href="30.html" class="cross-ref-link">30. Packable Serialization</a>
+        
+    </div>
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="19.html" class="nav-prev">&larr; 19. Authorization Witnesses</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="27.html" class="nav-next">27. Generated Calling Interfaces &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

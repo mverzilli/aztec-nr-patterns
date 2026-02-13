@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30. Packable Serialization — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="29.html" class="nav-prev">&larr; 29. Function Annotation Convention</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="31.html" class="nav-next">31. Partial Notes &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/implementation.html" class="pattern-scale-link">Implementation</a>
+        
+        <h1>
+            <span class="pattern-number">30</span>
+            Packable Serialization
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">serialization</span>
+            
+            <span class="tag">storage</span>
+            
+            <span class="tag">fields</span>
+            
+            <span class="tag">traits</span>
+            
+        </div>
+        
+    </header>
+
+    
+
+    <div class="pattern-body">
+        <p>Blockchain state is ultimately stored as arrays of finite field elements, but contract developers work with structured types (structs, integers, addresses). The system needs a uniform way to convert between structured types and field arrays for storage and hashing.</p>
+<h2 id="context">Context</h2>
+<p>The <code>Packable</code> trait defines how types are serialized to and deserialized from fixed-length field arrays:</p>
+<pre class="codehilite"><code class="language-noir">trait Packable&lt;let N: u32&gt; {
+    fn pack(self) -&gt; [Field; N];
+    fn unpack(fields: [Field; N]) -&gt; Self;
+}
+</code></pre>
+
+<p>Every type stored in state variables must implement <code>Packable</code>. This includes note types (packed for hashing), public state values (packed for storage tree insertion), and function arguments (packed for cross-contract call serialization).</p>
+<p>The trait is implemented for primitive types (<code>Field</code>, <code>u128</code>, <code>AztecAddress</code>, <code>bool</code>) and can be derived for structs. The packed length <code>N</code> is a compile-time constant, enabling the type system to verify that storage slots are correctly sized and that serialization round-trips are length-preserving.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Implement <code>Packable</code> for any custom type that needs to be stored, hashed, or passed across contract boundaries. For structs, this typically means concatenating the packed representations of each field. The compile-time length parameter ensures that packing/unpacking is always symmetric -- a value packed into <code>N</code> fields will always unpack from exactly <code>N</code> fields.</p>
+<h2 id="consequences">Consequences</h2>
+<p><code>Packable</code> provides a single, consistent serialization mechanism across the entire framework. Storage, hashing, cross-contract calls, and event emission all use the same serialization path. The trade-off is that all storable types must express themselves as fixed-length field arrays, which can be awkward for variable-length data. In practice, the framework provides utilities for common cases (compressed strings, bounded arrays).</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="29.html" class="nav-prev">&larr; 29. Function Annotation Convention</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="31.html" class="nav-next">31. Partial Notes &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2. UTXO-Based Private State — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="1.html" class="nav-prev">&larr; 1. Dual Execution Model</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="3.html" class="nav-next">3. Kernel Siloing &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/system.html" class="pattern-scale-link">System Architecture</a>
+        
+        <h1>
+            <span class="pattern-number">2</span>
+            UTXO-Based Private State
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">privacy</span>
+            
+            <span class="tag">state</span>
+            
+            <span class="tag">notes</span>
+            
+            <span class="tag">utxo</span>
+            
+        </div>
+        
+    </header>
+
+    
+
+    <div class="pattern-body">
+        <p>An account model for private state (like Solidity's storage slots) would require a global view of all state to verify transitions, destroying privacy. The system needs a way to represent private state that can be created, read, and destroyed without revealing its contents or existence to other users.</p>
+<h2 id="context">Context</h2>
+<p>In Aztec, private state is represented as <strong>notes</strong> following the UTXO (Unspent Transaction Output) model. Each note is a discrete data object that lives in a global note hash tree. Only its hash is publicly visible; the note's contents are known only to parties who have received its encrypted payload.</p>
+<p>A note is created by inserting its hash into the tree. A note is destroyed by publishing a <strong>nullifier</strong> -- a deterministic value derived from the note hash and a secret key. Because the nullifier reveals nothing about which note it destroys (without the secret), observers cannot link creation and destruction events.</p>
+<p>This model means private state is not a single mutable slot but a <strong>collection of notes</strong>. A token balance, for instance, is the sum of all unspent notes owned by an address. Updating a balance means destroying old notes and creating new ones with the desired values.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Model all private state as collections of notes. Each note type defines how its hash and nullifier are computed (see <strong>Note Lifecycle</strong>). State variables like <code>PrivateSet</code>, <code>PrivateMutable</code>, and <code>PrivateImmutable</code> provide ergonomic abstractions over the underlying note operations, but the UTXO model is always present beneath. Developers choose which note type to use based on their ownership and mutability requirements.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The UTXO model provides strong privacy guarantees but requires a different mental model than account-based storage. Balances are inherently fragmented across multiple notes. Reading state requires discovering which notes exist (see <strong>Privacy-Preserving State Discovery</strong>). The framework provides the <strong>Owned State Containers</strong> pattern to make per-owner state management ergonomic.</p>
+    </div>
+
+    
+    <div class="cross-ref cross-ref-down">
+        <span class="cross-ref-label">Contains:</span>
+        
+        <a href="14.html" class="cross-ref-link">14. Owned State Containers</a>, 
+        
+        <a href="16.html" class="cross-ref-link">16. Note Lifecycle</a>, 
+        
+        <a href="17.html" class="cross-ref-link">17. Explicit Delivery</a>
+        
+    </div>
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="1.html" class="nav-prev">&larr; 1. Dual Execution Model</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="3.html" class="nav-next">3. Kernel Siloing &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

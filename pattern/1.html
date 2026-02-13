@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1. Dual Execution Model — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <span class="nav-prev"></span>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="2.html" class="nav-next">2. UTXO-Based Private State &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/system.html" class="pattern-scale-link">System Architecture</a>
+        
+        <h1>
+            <span class="pattern-number">1</span>
+            Dual Execution Model
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">architecture</span>
+            
+            <span class="tag">execution</span>
+            
+            <span class="tag">privacy</span>
+            
+            <span class="tag">public</span>
+            
+        </div>
+        
+    </header>
+
+    
+
+    <div class="pattern-body">
+        <p>A blockchain that executes everything publicly leaks all user data, but a blockchain that executes everything privately cannot support shared mutable state. The system needs both modes, but combining them introduces fundamental asymmetries in timing, visibility, and guarantees.</p>
+<h2 id="context">Context</h2>
+<p>Aztec separates execution into two domains that operate under radically different rules. <strong>Private functions</strong> run on the user's device, producing zero-knowledge proofs that attest to correct execution without revealing inputs. <strong>Public functions</strong> run on the block proposer's machine against the current blockchain state, visible to everyone.</p>
+<p>This split is not merely an optimization choice; it is an architectural invariant that pervades every design decision in aztec-nr. Private execution is asynchronous: by the time a private transaction is included in a block, the state it read may have changed. Public execution is synchronous: it sees and modifies current state within the same block.</p>
+<p>The two domains communicate through a one-way bridge: private functions can <strong>enqueue</strong> public calls (see <strong>Asynchronous Cross-Domain Messaging</strong>), but public functions cannot call private ones. This asymmetry exists because private execution produces proofs against historical state, while public execution requires current state.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Accept the dual-execution model as the foundational invariant of the system. Design every abstraction so that the domain boundary is explicit and enforced at compile time. Private and public functions receive different context types (<code>PrivateContext</code> vs <code>PublicContext</code>), and the type system prevents operations that cross the boundary incorrectly. State variables declare which contexts they support, making it a compile error to read public mutable state from a private function.</p>
+<h2 id="consequences">Consequences</h2>
+<p>Developers must think in terms of two execution environments with different capabilities and timing guarantees. This is the primary source of complexity in aztec-nr, but also the source of its privacy guarantees. The framework minimizes accidental misuse through the <strong>Context-Aware Type System</strong>, making the boundary feel natural rather than burdensome.</p>
+    </div>
+
+    
+    <div class="cross-ref cross-ref-down">
+        <span class="cross-ref-label">Contains:</span>
+        
+        <a href="11.html" class="cross-ref-link">11. Context-Aware Type System</a>, 
+        
+        <a href="12.html" class="cross-ref-link">12. The Self Object</a>, 
+        
+        <a href="18.html" class="cross-ref-link">18. Event Emission Protocol</a>
+        
+    </div>
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <span class="nav-prev"></span>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="2.html" class="nav-next">2. UTXO-Based Private State &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>

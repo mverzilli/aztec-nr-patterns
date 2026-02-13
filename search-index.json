@@ -1,0 +1,264 @@
+[
+  {
+    "number": 1,
+    "name": "Dual Execution Model",
+    "problem": "A blockchain that executes everything publicly leaks all user data, but a blockchain that executes everything privately cannot support shared mutable state. The system needs both modes, but combining ",
+    "tags": [
+      "architecture",
+      "execution",
+      "privacy",
+      "public"
+    ],
+    "scale": "system",
+    "confidence": 2
+  },
+  {
+    "number": 2,
+    "name": "UTXO-Based Private State",
+    "problem": "An account model for private state (like Solidity's storage slots) would require a global view of all state to verify transitions, destroying privacy. The system needs a way to represent private state",
+    "tags": [
+      "privacy",
+      "state",
+      "notes",
+      "utxo"
+    ],
+    "scale": "system",
+    "confidence": 2
+  },
+  {
+    "number": 3,
+    "name": "Kernel Siloing",
+    "problem": "If two contracts independently create notes with the same hash, or if a malicious contract can produce nullifiers that collide with another contract's notes, the integrity of private state collapses.",
+    "tags": [
+      "security",
+      "isolation",
+      "hashing",
+      "kernel"
+    ],
+    "scale": "system",
+    "confidence": 2
+  },
+  {
+    "number": 4,
+    "name": "Asynchronous Cross-Domain Messaging",
+    "problem": "Private functions execute on the user's device against historical state, while public functions execute on the block proposer against current state. A private function cannot synchronously call a publ",
+    "tags": [
+      "execution",
+      "async",
+      "enqueue",
+      "cross-domain"
+    ],
+    "scale": "system",
+    "confidence": 2
+  },
+  {
+    "number": 5,
+    "name": "Privacy-Preserving State Discovery",
+    "problem": "In a privacy-preserving system, the blockchain stores only hashes of private state. But the user's client must somehow learn which notes it owns without asking the network to reveal them.",
+    "tags": [
+      "privacy",
+      "discovery",
+      "oracle",
+      "pxe"
+    ],
+    "scale": "system",
+    "confidence": 2
+  },
+  {
+    "number": 11,
+    "name": "Context-Aware Type System",
+    "problem": "A developer might accidentally read public mutable state from a private function, or attempt to create notes in a public context. These errors are subtle and would produce cryptographically invalid pr",
+    "tags": [
+      "types",
+      "generics",
+      "safety",
+      "compile-time"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 12,
+    "name": "The Self Object",
+    "problem": "Contract functions need access to storage, the execution context, the contract's own address, and the ability to call other contracts or emit events. Passing all of these as separate parameters would ",
+    "tags": [
+      "interface",
+      "abstraction",
+      "contract",
+      "ergonomics"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 13,
+    "name": "State Variable Hierarchy",
+    "problem": "The dual-execution model demands different storage semantics for public and private state, yet contracts need a uniform way to declare and organize their storage. Without a shared abstraction, each st",
+    "tags": [
+      "storage",
+      "state",
+      "traits",
+      "hierarchy"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 14,
+    "name": "Owned State Containers",
+    "problem": "Private state variables hold notes that belong to specific owners, but the storage system assigns a single base slot per field. Without a way to scope private state by owner, every user's notes would ",
+    "tags": [
+      "ownership",
+      "state",
+      "notes",
+      "per-user"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 15,
+    "name": "Storage Slot Derivation",
+    "problem": "A mapping from keys to values needs a way to assign unique storage slots to each key-value pair. Using sequential numbering would require knowing all keys in advance, which is impossible for open-ende",
+    "tags": [
+      "storage",
+      "hashing",
+      "slots",
+      "map"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 16,
+    "name": "Note Lifecycle",
+    "problem": "Notes are the atoms of private state, but they have a non-trivial lifecycle: creation, retrieval, and destruction each involve different cryptographic operations and different interactions with the ke",
+    "tags": [
+      "notes",
+      "lifecycle",
+      "create",
+      "destroy",
+      "nullify"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 17,
+    "name": "Explicit Delivery",
+    "problem": "A created note is useless to its owner until the owner's PXE discovers it. If the framework silently handled delivery, developers might not realize that a missing or misconfigured delivery means the r",
+    "tags": [
+      "notes",
+      "delivery",
+      "encryption",
+      "privacy",
+      "intentionality"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 18,
+    "name": "Event Emission Protocol",
+    "problem": "Contracts need to emit observable side-effects for off-chain indexing, but in a privacy-preserving system, events must support both encrypted (private) and transparent (public) emission modes.",
+    "tags": [
+      "events",
+      "logging",
+      "privacy",
+      "encryption"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 19,
+    "name": "Authorization Witnesses",
+    "problem": "In a privacy-preserving system, the traditional `msg.sender` check for authorization is insufficient. A user might want to authorize a specific action without being the direct caller, or delegate auth",
+    "tags": [
+      "authorization",
+      "authentication",
+      "accounts",
+      "delegation"
+    ],
+    "scale": "framework",
+    "confidence": 2
+  },
+  {
+    "number": 26,
+    "name": "Macro-Driven Contract Definition",
+    "problem": "A privacy-preserving smart contract requires substantial boilerplate: note hash and nullifier computation dispatch, state synchronization entry points, message decryption logic, and ABI exports. Writi",
+    "tags": [
+      "macros",
+      "codegen",
+      "boilerplate",
+      "aztec-macro"
+    ],
+    "scale": "implementation",
+    "confidence": 2
+  },
+  {
+    "number": 27,
+    "name": "Generated Calling Interfaces",
+    "problem": "Cross-contract calls require encoding function selectors and arguments correctly. Manual encoding is fragile -- a mistyped selector or wrong argument order produces silent failures or invalid proofs.",
+    "tags": [
+      "codegen",
+      "cross-contract",
+      "type-safety",
+      "calls"
+    ],
+    "scale": "implementation",
+    "confidence": 2
+  },
+  {
+    "number": 28,
+    "name": "Initialization Guards",
+    "problem": "A contract that can be initialized multiple times is vulnerable to state reset attacks. But in a privacy-preserving system, simply checking a boolean flag in public storage would leak information abou",
+    "tags": [
+      "initialization",
+      "constructor",
+      "nullifier",
+      "safety"
+    ],
+    "scale": "implementation",
+    "confidence": 2
+  },
+  {
+    "number": 29,
+    "name": "Function Annotation Convention",
+    "problem": "A contract contains functions with fundamentally different execution semantics: private, public, utility, internal, initializer, view-only. Without a clear classification system, it is ambiguous which",
+    "tags": [
+      "macros",
+      "annotations",
+      "functions",
+      "convention"
+    ],
+    "scale": "implementation",
+    "confidence": 2
+  },
+  {
+    "number": 30,
+    "name": "Packable Serialization",
+    "problem": "Blockchain state is ultimately stored as arrays of finite field elements, but contract developers work with structured types (structs, integers, addresses). The system needs a uniform way to convert b",
+    "tags": [
+      "serialization",
+      "storage",
+      "fields",
+      "traits"
+    ],
+    "scale": "implementation",
+    "confidence": 2
+  },
+  {
+    "number": 31,
+    "name": "Partial Notes",
+    "problem": "Some operations require a value that is only known after public execution, but the note must be created in private context. Neither domain alone has all the information needed to create the complete n",
+    "tags": [
+      "notes",
+      "cross-domain",
+      "partial",
+      "advanced"
+    ],
+    "scale": "implementation",
+    "confidence": 1
+  }
+]

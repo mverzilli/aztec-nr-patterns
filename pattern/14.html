@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14. Owned State Containers — A Pattern Language for Aztec-nr</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../theme.css">
+</head>
+<body class="">
+    <header class="site-header">
+        <div class="header-content">
+            <a href="../index.html" class="site-title">A Pattern Language for Aztec-nr</a>
+            <span class="site-subtitle">Privacy-Preserving Smart Contract Development in Noir</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off">
+                <div id="search-results" class="search-results" hidden></div>
+            </div>
+        </div>
+        <nav class="scale-nav">
+            
+            <a href="../scale/system.html">System Architecture</a>
+            
+            <a href="../scale/framework.html">Framework Abstractions</a>
+            
+            <a href="../scale/implementation.html">Implementation</a>
+            
+            <span class="nav-separator">|</span>
+            <a href="../graph.html">Graph</a>
+        </nav>
+    </header>
+
+    <main>
+        
+<article class="pattern-page">
+    <nav class="pattern-nav">
+        
+        <a href="13.html" class="nav-prev">&larr; 13. State Variable Hierarchy</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="15.html" class="nav-next">15. Storage Slot Derivation &rarr;</a>
+        
+    </nav>
+
+    <header class="pattern-header">
+        
+        <a href="../scale/framework.html" class="pattern-scale-link">Framework Abstractions</a>
+        
+        <h1>
+            <span class="pattern-number">14</span>
+            Owned State Containers
+            <span class="confidence-indicator" title="Invariant">★★</span>
+        </h1>
+        
+        <div class="pattern-tags">
+            
+            <span class="tag">ownership</span>
+            
+            <span class="tag">state</span>
+            
+            <span class="tag">notes</span>
+            
+            <span class="tag">per-user</span>
+            
+        </div>
+        
+    </header>
+
+    
+    <div class="cross-ref cross-ref-up">
+        <span class="cross-ref-label">Contained by:</span>
+        
+        <a href="2.html" class="cross-ref-link">2. UTXO-Based Private State</a>, 
+        
+        <a href="13.html" class="cross-ref-link">13. State Variable Hierarchy</a>
+        
+    </div>
+    
+
+    <div class="pattern-body">
+        <p>Private state variables hold notes that belong to specific owners, but the storage system assigns a single base slot per field. Without a way to scope private state by owner, every user's notes would share the same storage slot, making retrieval inefficient and semantics unclear.</p>
+<h2 id="context">Context</h2>
+<p>The <code>Owned&lt;V, Context&gt;</code> wrapper provides per-owner instances of private state variables. Declaring <code>balances: Owned&lt;PrivateSet&lt;TokenNote, Context&gt;, Context&gt;</code> in the storage struct creates a single base slot; calling <code>self.storage.balances.at(owner_address)</code> derives an owner-specific slot and returns a <code>PrivateSet</code> scoped to that owner.</p>
+<p>Under the hood, <code>Owned</code> uses the same hash-based slot derivation as <code>Map</code> (see <strong>Storage Slot Derivation</strong>), but it is semantically distinct: <code>Owned</code> is specifically for private state variables that require an owner context. This distinction matters because private note operations need an owner address for note hash computation, nullifier derivation, and encrypted delivery.</p>
+<p>The <code>at(owner)</code> method does not merely derive a slot -- it also configures the returned state variable with the owner's address, which flows into note creation and destruction operations.</p>
+<h2 id="therefore">Therefore</h2>
+<p>Use <code>Owned&lt;V&gt;</code> for any private state that is logically partitioned by owner. The most common patterns are <code>Owned&lt;PrivateSet&lt;Note&gt;&gt;</code> for collections (like token balances) and <code>Owned&lt;PrivateMutable&lt;Note&gt;&gt;</code> for single-value state (like a user's nonce). Access the owner-specific instance with <code>.at(owner_address)</code> before performing reads or writes.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The ownership model maps naturally to the UTXO approach: each owner's notes are logically grouped, and the framework knows which address to use for nullifier computation and delivery. The trade-off is that <code>Owned</code> is an additional wrapper type that developers must use for private-but-per-owner state, but attempting to use a bare <code>PrivateSet</code> in storage will produce a compile error, guiding developers toward the correct pattern.</p>
+    </div>
+
+    
+
+    <nav class="pattern-nav pattern-nav-bottom">
+        
+        <a href="13.html" class="nav-prev">&larr; 13. State Variable Hierarchy</a>
+        
+
+        <a href="../index.html" class="nav-up">All Patterns</a>
+
+        
+        <a href="15.html" class="nav-next">15. Storage Slot Derivation &rarr;</a>
+        
+    </nav>
+</article>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>The Aztec Team</p>
+        <p class="generator-credit">Built with <a href="https://github.com/language-patterner">language-patterner</a></p>
+    </footer>
+
+    <script>
+        window.SEARCH_INDEX_URL = "../search-index.json";
+        window.ROOT_PREFIX = "../";
+    </script>
+    <script src="../search.js"></script>
+</body>
+</html>
