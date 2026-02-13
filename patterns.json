@@ -1,9 +1,7 @@
 {
   "title": "A Pattern Language for Aztec-nr",
   "subtitle": "Privacy-Preserving Smart Contract Development in Noir",
-  "authors": [
-    "The Aztec Team"
-  ],
+  "authors": [],
   "scales": [
     {
       "id": "system",
