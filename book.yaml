@@ -1,0 +1,25 @@
+title: "A Pattern Language for Aztec-nr"
+subtitle: "Privacy-Preserving Smart Contract Development in Noir"
+authors:
+  - The Aztec Team
+
+scales:
+  - id: system
+    name: "System Architecture"
+    description: "Patterns shaping the dual-execution, privacy-preserving blockchain model"
+    range: [1, 10]
+  - id: framework
+    name: "Framework Abstractions"
+    description: "Patterns for the core abstractions that contract developers use daily"
+    range: [11, 25]
+  - id: implementation
+    name: "Implementation"
+    description: "Patterns at the code level: macros, conventions, and techniques"
+    range: [26, 40]
+
+confidence_labels:
+  0: "Hypothesis"
+  1: "Progressing"
+  2: "Invariant"
+
+style: "Aztec Network — dark, electric chartreuse accent"
